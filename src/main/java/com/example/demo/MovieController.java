@@ -11,6 +11,6 @@ public class MovieController {
     public Movie getMovieById(@PathVariable String id) {
         // For demonstration, returning a hardcoded movie object.
         // In a real application, you'd fetch this data from a database.
-        return new Movie(id, "The Shawshank Redemption", "Frank Darabont");
+        return new Movie(id, "The Bahubali Conclusion", "SS Rajamouli");
     }
 }
