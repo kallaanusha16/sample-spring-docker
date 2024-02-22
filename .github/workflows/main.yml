@@ -1,0 +1,34 @@
+name: Docker Build and Publish
+
+on:
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main # Adjust branch name as needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_REPO_NAME: sample-spring-boot
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build with Jib
+        run: ./mvnw compile com.google.cloud.tools:jib-maven-plugin:3.1.4:build -Djib.to.image=${{ secrets.DOCKERHUB_USERNAME }}/${{env.DOCKER_REPO_NAME}}:${{ github.sha }}
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+       
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.DOCKER_REPO_NAME }}:${{ github.sha }} 
